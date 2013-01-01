@@ -14,26 +14,31 @@
 
 (defn evaluate [expr env]
   "assumption: env won't change"
-  (if (= 'quote (first expr))
-    (get env (second expr))
+  (if (list? expr)
+    (let [[car & cdr] expr]
+      (condp = car
+        'fcall (let [func (evaluate (first cdr) env)
+                     args (map #(evaluate % env) (second cdr))]
+                 (condp = func
+                   'console.log (println (first args))
+                   '+ (+ (first args) (second args))
+                   (prn 'must-not-happen 'missing-function func)))
+        'quote (get env (first cdr))
+        expr))
     expr))
 
-(defn run [exprs]
-  (loop [[expr & exprs] exprs env {'console.log 'console.log}]
-    (when expr
-      (if-let [[car & cdr] expr]
-        (do
-          #_(prn car cdr env)
-          (condp = car
-            'var (let [vname (first cdr)
-                       vvalue (evaluate (second cdr) env)]
-                   (recur exprs (assoc env vname vvalue)))
-            'fcall (let [func (evaluate (first cdr) env)
-                         args (map #(evaluate % env) (second cdr))]
-                     (condp = func
-                       'console.log (println (first args))
-                       (prn 'must-not-happen 'missing-function)))
-            (prn 'must-not-happen expr)))
-        expr))))
+(defn run [stmts]
+  (loop [[stmt & stmts] stmts env {'console.log 'console.log '+ '+}]
+    (when stmt
+      (let [[car & cdr] stmt]
+        (condp = car
+          'var (let [vname (first cdr)
+                     vvalue (evaluate (second cdr) env)]
+                 (recur stmts (assoc env vname vvalue)))
+          'return (prn 'not-implemented-yet)
+          (do
+            (evaluate stmt env)
+            (recur stmts env)))))))
 
-(run '[(var x "hello") (fcall 'console.log ['x])])
+(run '[(var x 1)
+       (fcall 'console.log [(fcall '+ ['x 2])])])
