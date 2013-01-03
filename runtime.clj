@@ -75,28 +75,26 @@
             (recur stmts env)))))))
 
 (def ^:dynamic *builtins* {})
+(defmacro defbuiltin [x y z]
+  `(def ^:dynamic *builtins*
+     (assoc *builtins* '~x
+            (fn ~y
+              ~z))))
 
-(def ^:dynamic *builtins*
-  (assoc *builtins* 'console.log
-         (fn [[x]]
-           (println (js-string x)))))
+(defbuiltin console.log [[x]]
+  (println (js-string x)))
 
-(def ^:dynamic *builtins*
-  (assoc *builtins* '+
-         (fn [args]
-           (if (every? number? args)
-             (+ (first args) (second args))
-             (str (js-string (first args)) (js-string (second args)))))))
+(defbuiltin + [args]
+  (if (every? number? args)
+    (+ (first args) (second args))
+    (str (js-string (first args)) (js-string (second args)))))
 
-(def ^:dynamic *builtins*
-  (assoc *builtins* '===
-         (fn [args]
-           (= (first args) (second args)))))
 
-(def ^:dynamic *builtins*
-  (assoc *builtins* '!==
-         (fn [args]
-           (not= (first args) (second args)))))
+(defbuiltin === [args]
+  (= (first args) (second args)))
+
+(defbuiltin !== [args]
+  (not= (first args) (second args)))
 
 (def ^:dynamic *builtins*
   (merge *builtins* {'null 'null 'undefined 'undefined 'NaN 'NaN}))
