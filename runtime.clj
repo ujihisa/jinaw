@@ -49,15 +49,14 @@
                    {:type :function :params params :body body})
         fcall (let [func (evaluate (first cdr) env)
                     args (map #(evaluate % env) (second cdr))]
-                (case func
-                  (if (= (:type func) :function)
-                    (let [applied-params (into {} (map (fn [x y] [x y])
-                                                       (:params func)
-                                                       args))]
-                      (run- (:body func) (merge env applied-params)))
-                    (if (fn? func)
-                      (func args)
-                      (prn 'must-not-happen 'missing-function func)))))
+                (cond
+                  (= (:type func) :function)
+                  (let [applied-params (into {} (map (fn [x y] [x y])
+                                                     (:params func)
+                                                     args))]
+                    (run- (:body func) (merge env applied-params)))
+                  (fn? func) (func args)
+                  :else (prn 'must-not-happen 'missing-function func)))
         quote (get env (first cdr) 'missing-local-var)
         expr))
     expr))
