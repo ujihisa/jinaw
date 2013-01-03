@@ -15,7 +15,7 @@
 (defn js-boolean
   "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Boolean"
   [value]
-  (not (get #{0 'null false 'NaN 'undefined} value false)))
+  (not (contains? #{0 'null false 'NaN 'undefined} value)))
 
 (defn js-number
   "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Number"
@@ -89,5 +89,9 @@
                         [(fcall 'console.log ['x])])
               [2])])
 (run '[(fcall 'console.log [(if 0 2 3)])])
-(run '[(fcall 'console.log [(fcall '=== [1 1])])])
-(run '[(fcall 'console.log [(fcall '=== [1 2])])])
+(run '[(var f (function [n]
+                        [(fcall 'console.log ['n])
+                         (if (fcall '=== ['n 10])
+                           (fcall 'console.log ["end"])
+                           (fcall 'f [(fcall '+ ['n 1])]))]))
+       (fcall 'f [0])])
