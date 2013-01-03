@@ -50,18 +50,14 @@
         fcall (let [func (evaluate (first cdr) env)
                     args (map #(evaluate % env) (second cdr))]
                 (case func
-                  console.log (println (js-string (first args)))
-                  + (if (every? number? args)
-                      (+ (first args) (second args))
-                      (str (js-string (first args)) (js-string (second args))))
-                  === (= (first args) (second args))
-                  !== (not= (first args) (second args))
                   (if (= (:type func) :function)
                     (let [applied-params (into {} (map (fn [x y] [x y])
                                                        (:params func)
                                                        args))]
                       (run- (:body func) (merge env applied-params)))
-                    (prn 'must-not-happen 'missing-function func))))
+                    (if (fn? func)
+                      (func args)
+                      (prn 'must-not-happen 'missing-function func)))))
         quote (get env (first cdr) 'missing-local-var)
         expr))
     expr))
@@ -79,9 +75,35 @@
             (evaluate stmt env)
             (recur stmts env)))))))
 
+(def ^:dynamic *builtins* {})
+
+(def ^:dynamic *builtins*
+  (assoc *builtins* 'console.log
+         (fn [[x]]
+           (println (js-string x)))))
+
+(def ^:dynamic *builtins*
+  (assoc *builtins* '+
+         (fn [args]
+           (if (every? number? args)
+             (+ (first args) (second args))
+             (str (js-string (first args)) (js-string (second args)))))))
+
+(def ^:dynamic *builtins*
+  (assoc *builtins* '===
+         (fn [args]
+           (= (first args) (second args)))))
+
+(def ^:dynamic *builtins*
+  (assoc *builtins* '!==
+         (fn [args]
+           (not= (first args) (second args)))))
+
+(def ^:dynamic *builtins*
+  (merge *builtins* {'null 'null 'undefined 'undefined 'NaN 'NaN}))
+
 (defn run [stmts]
-  (run- stmts {'console.log 'console.log '+ '+ 'null 'null 'undefined 'undefined 'NaN 'NaN
-               '=== '=== '!== '!==}))
+  (run- stmts *builtins*))
 
 (run '[(var x 1)
        (fcall 'console.log [(fcall '+ ['x "hello"])])])
