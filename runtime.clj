@@ -54,6 +54,8 @@
                   + (if (every? number? args)
                       (+ (first args) (second args))
                       (str (js-string (first args)) (js-string (second args))))
+                  === (= (first args) (second args))
+                  !== (not= (first args) (second args))
                   (if (= (:type func) :function)
                     (let [applied-params (into {} (map (fn [x y] [x y])
                                                        (:params func)
@@ -78,7 +80,8 @@
             (recur stmts env)))))))
 
 (defn run [stmts]
-  (run- stmts {'console.log 'console.log '+ '+ 'null 'null 'undefined 'undefined 'NaN 'NaN}))
+  (run- stmts {'console.log 'console.log '+ '+ 'null 'null 'undefined 'undefined 'NaN 'NaN
+               '=== '=== '!== '!==}))
 
 (run '[(var x 1)
        (fcall 'console.log [(fcall '+ ['x "hello"])])])
@@ -86,3 +89,5 @@
                         [(fcall 'console.log ['x])])
               [2])])
 (run '[(fcall 'console.log [(if 0 2 3)])])
+(run '[(fcall 'console.log [(fcall '=== [1 1])])])
+(run '[(fcall 'console.log [(fcall '=== [1 2])])])
