@@ -78,23 +78,23 @@
 (defmacro defbuiltin [x y z]
   `(def ^:dynamic *builtins*
      (assoc *builtins* '~x
-            (fn ~y
+            (fn ~[y]
               ~z))))
 
-(defbuiltin console.log [[x]]
+(defbuiltin console.log [x]
   (println (js-string x)))
 
-(defbuiltin + [args]
-  (if (every? number? args)
-    (+ (first args) (second args))
-    (str (js-string (first args)) (js-string (second args)))))
+(defbuiltin + [x y]
+  (if (and (number? x) (number? y))
+    (+ x y)
+    (str (js-string x) (js-string y))))
 
 
-(defbuiltin === [args]
-  (= (first args) (second args)))
+(defbuiltin === [x y]
+  (= x y))
 
-(defbuiltin !== [args]
-  (not= (first args) (second args)))
+(defbuiltin !== [x y]
+  (not= x y))
 
 (def ^:dynamic *builtins*
   (merge *builtins* {'null 'null 'undefined 'undefined 'NaN 'NaN}))
