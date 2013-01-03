@@ -40,6 +40,10 @@
   (if (list? expr)
     (let [[car & cdr] expr]
       (case car
+        if (let [[cond- then- else-] cdr]
+             (if (js-boolean (evaluate cond- env))
+               (evaluate then- env)
+               (evaluate else- env)))
         function (let [params (first cdr)
                        body (second cdr)]
                    {:type :function :params params :body body})
@@ -81,3 +85,4 @@
 (run '[(fcall (function [x]
                         [(fcall 'console.log ['x])])
               [2])])
+(run '[(fcall 'console.log [(if 0 2 3)])])
