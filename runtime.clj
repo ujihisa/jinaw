@@ -131,6 +131,11 @@
       :else
       (prn 'hmm...?))))
 
+(defbuiltin -aref [x i]
+  (if (= "object" (js-type x))
+    (get x (js-string i) 'undefined)
+    'undefined))
+
 (def ^:dynamic *builtins*
   (merge *builtins* {'null 'null 'undefined 'undefined 'NaN 'NaN}))
 
