@@ -75,14 +75,15 @@
             (recur stmts env)))))))
 
 (def ^:dynamic *builtins* {})
-(defmacro defbuiltin [x y z]
+(defmacro defbuiltin [x y & z]
   `(def ^:dynamic *builtins*
      (assoc *builtins* '~x
             (fn ~[y]
-              ~z))))
+              ~@z))))
 
 (defbuiltin console.log [x]
-  (println (js-string x)))
+  (println (js-string x))
+  'undefined)
 
 (defbuiltin + [x y]
   (if (and (number? x) (number? y))
