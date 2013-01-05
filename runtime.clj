@@ -33,6 +33,14 @@
   [value]
   (.toString value))
 
+(defn js-type [value]
+  (if (map? value)
+    (if (= :function (value :type))
+      "function"
+      "object")
+    ({"Long" "number" "Double" "number" "String" "string"}
+      (.getSimpleName (type value)))))
+
 (declare run-)
 
 (defn evaluate [expr env]
