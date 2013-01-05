@@ -111,6 +111,26 @@
 (defbuiltin !== [x y]
   (not= x y))
 
+(defbuiltin == [x y]
+  (let [x-type (js-type x)
+        y-type (js-type y)]
+    (cond
+      (= x-type y-type)
+      (= x y)
+
+      (or (#{"number" "boolean"} x-type)
+          (#{"number" "boolean"} y-type))
+      (= (js-number x) (js-number y))
+
+      (or (= "string" x-type) (= "string" y-type))
+      (= (js-string x) (js-string y))
+
+      (and (= "object" x-type) (= "object" y-type))
+      (prn 'not-implemented-yet)
+
+      :else
+      (prn 'hmm...?))))
+
 (def ^:dynamic *builtins*
   (merge *builtins* {'null 'null 'undefined 'undefined 'NaN 'NaN}))
 
