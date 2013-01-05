@@ -65,6 +65,12 @@
                     (run- (:body func) (merge env applied-params)))
                   (fn? func) (func args)
                   :else (prn 'must-not-happen 'missing-function func)))
+        typeof (let [x (first cdr)]
+                 (if (= clojure.lang.Symbol (type x))
+                   (if-let [x (get env x)]
+                     (js-type (evaluate x env))
+                     'undefined)
+                   (js-type (evaluate x env))))
         quote (get env (first cdr) 'missing-local-var)
         expr))
     expr))
