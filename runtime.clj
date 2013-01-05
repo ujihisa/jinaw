@@ -69,7 +69,7 @@
           var (let [vname (first cdr)
                     vvalue (evaluate (second cdr) env)]
                 (recur stmts (assoc env vname vvalue)))
-          return (prn 'not-implemented-yet)
+          return (evaluate (first cdr) env)
           (do
             (evaluate stmt env)
             (recur stmts env)))))))
@@ -102,15 +102,20 @@
 (defn run [stmts]
   (run- stmts *builtins*))
 
-(run '[(var x 1)
+#_(run '[(var x 1)
        (fcall 'console.log [(fcall '+ ['x "hello"])])])
-(run '[(fcall (function [x]
+#_(run '[(fcall (function [x]
                         [(fcall 'console.log ['x])])
               [2])])
-(run '[(fcall 'console.log [(if 0 2 3)])])
-(run '[(var f (function [n]
+#_(run '[(fcall 'console.log [(if 0 2 3)])])
+#_(run '[(var f (function [n]
                         [(fcall 'console.log ['n])
                          (if (fcall '=== ['n 10])
                            (fcall 'console.log ["end"])
                            (fcall 'f [(fcall '+ ['n 1])]))]))
        (fcall 'f [0])])
+(run '[(var f (function []
+                        [(fcall 'console.log [1])
+                         (return 9)
+                         (fcall 'console.log [2])]))
+       (fcall 'console.log [(fcall 'f [])])])
