@@ -76,3 +76,11 @@ after:
                                              'acc))]]))]])
          []))]
 ```
+
+## What doesn't this implementation cover
+
+* try/catch
+* lots of standard classes (e.g. Date)
+* browser specific features
+* setTimeout
+* require (like node.js's)
