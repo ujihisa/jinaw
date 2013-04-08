@@ -1,3 +1,5 @@
+(ns jinaw.runtime)
+
 (def sample-parsed
   '[(var acc "dummy")
     (var f
@@ -177,13 +179,14 @@
          (fcall 'console.log [(typeof y)])
          (fcall 'console.log [(typeof (fcall '+ ['x 2]))])])
 
-#_(run '[(fcall 'console.log [(fcall '== [1 1])])
+(defn -main []
+  (run '[(fcall 'console.log [(fcall '== [1 1])])
          (fcall 'console.log [(fcall '== [1 2])])
          (fcall 'console.log [(fcall '== ["1" 1])])
          (fcall 'console.log [(fcall '== ["1" 2])])
          (fcall 'console.log [(fcall '== ["1" "1"])])
          (fcall 'console.log [(fcall '== ["1" "2"])])
-         (fcall 'console.log [(fcall '== ["aaa" "aab"])])])
+         (fcall 'console.log [(fcall '== ["aaa" "aab"])])]))
 
 (comment
   (run '[(fcall 'console.log [(fcall '-aref [{"0" "a" "1" "b" "2" "c"} 0])])])
