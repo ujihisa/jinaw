@@ -145,45 +145,45 @@
 #_(run
   '[(var fib
          (function [n]
-           [(return
-              (if (fcall '=== ['n 0])
-                0
-                (if (fcall '=== ['n 1])
-                  1
-                  (fcall '+ [(fcall 'fib [(fcall '+ ['n -1])])
-                             (fcall 'fib [(fcall '+ ['n -2])])]))))]))
+                   [(return
+                      (if (fcall '=== ['n 0])
+                        0
+                        (if (fcall '=== ['n 1])
+                          1
+                          (fcall '+ [(fcall 'fib [(fcall '+ ['n -1])])
+                                     (fcall 'fib [(fcall '+ ['n -2])])]))))]))
     (fcall 'console.log [(fcall 'fib [30])])])
 
 #_(run '[(var x 1)
-       (fcall 'console.log [(fcall '+ ['x "hello"])])])
+         (fcall 'console.log [(fcall '+ ['x "hello"])])])
 #_(run '[(fcall (function [x]
-                        [(fcall 'console.log ['x])])
-              [2])])
+                          [(fcall 'console.log ['x])])
+                [2])])
 #_(run '[(fcall 'console.log [(if 0 2 3)])])
 #_(run '[(var f (function [n]
-                        [(fcall 'console.log ['n])
-                         (if (fcall '=== ['n 10])
-                           (fcall 'console.log ["end"])
-                           (fcall 'f [(fcall '+ ['n 1])]))]))
-       (fcall 'f [0])])
+                          [(fcall 'console.log ['n])
+                           (if (fcall '=== ['n 10])
+                             (fcall 'console.log ["end"])
+                             (fcall 'f [(fcall '+ ['n 1])]))]))
+         (fcall 'f [0])])
 #_(run '[(var f (function []
-                        [(fcall 'console.log [1])
-                         (return 9)
-                         (fcall 'console.log [2])]))
-       (fcall 'console.log [(fcall 'f [])])])
+                          [(fcall 'console.log [1])
+                           (return 9)
+                           (fcall 'console.log [2])]))
+         (fcall 'console.log [(fcall 'f [])])])
 #_(run '[(fcall 'console.log [(typeof 1)])
-       (var x 1)
-       (fcall 'console.log [(typeof x)])
-       (fcall 'console.log [(typeof y)])
-       (fcall 'console.log [(typeof (fcall '+ ['x 2]))])])
+         (var x 1)
+         (fcall 'console.log [(typeof x)])
+         (fcall 'console.log [(typeof y)])
+         (fcall 'console.log [(typeof (fcall '+ ['x 2]))])])
 
 #_(run '[(fcall 'console.log [(fcall '== [1 1])])
-       (fcall 'console.log [(fcall '== [1 2])])
-       (fcall 'console.log [(fcall '== ["1" 1])])
-       (fcall 'console.log [(fcall '== ["1" 2])])
-       (fcall 'console.log [(fcall '== ["1" "1"])])
-       (fcall 'console.log [(fcall '== ["1" "2"])])
-       (fcall 'console.log [(fcall '== ["aaa" "aab"])])])
+         (fcall 'console.log [(fcall '== [1 2])])
+         (fcall 'console.log [(fcall '== ["1" 1])])
+         (fcall 'console.log [(fcall '== ["1" 2])])
+         (fcall 'console.log [(fcall '== ["1" "1"])])
+         (fcall 'console.log [(fcall '== ["1" "2"])])
+         (fcall 'console.log [(fcall '== ["aaa" "aab"])])])
 
 (comment
   (run '[(fcall 'console.log [(fcall '-aref [{"0" "a" "1" "b" "2" "c"} 0])])])
@@ -191,4 +191,4 @@
   (run '[(fcall 'console.log [(fcall '-aref [{"0" "a" "1" "b" "2" "c"} 3])])])
   (run '[(fcall 'console.log [(fcall '-aref [{"0" "a" "1" "b" "2" "c"} "4"])])]))
 
-
+; vim: set lispwords+=defbuiltin :
