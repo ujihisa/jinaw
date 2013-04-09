@@ -1,4 +1,5 @@
-(ns jinaw.runtime)
+(ns jinaw.runtime
+  (:require [clojure.data.json :as json]))
 
 (def sample-parsed
   '[(var acc "dummy")
