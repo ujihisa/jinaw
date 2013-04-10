@@ -1,12 +1,6 @@
 (ns jinaw.parse
   (:require [clojure.data.json :as json]))
 
-(defn- get1 [node]
-  (case (node "type")
-    "Identifier" (symbol (node "name"))
-    "Literal" (node "value")
-    (prn 'omg! node)))
-
 (declare parse)
 
 (defn- parse-expr [expression]
@@ -16,14 +10,14 @@
       (into {} (map vector (map str (iterate inc 0)) value-vec)))
     "BinaryExpression"
     (list 'fcall (symbol (expression "operator"))
-          [(get1 (expression "left"))
-           (get1 (expression "right"))])
+          [(parse-expr (expression "left"))
+           (parse-expr (expression "right"))])
     "CallExpression"
     (list 'fcall (parse-expr (expression "callee"))
           (mapv parse-expr (expression "arguments")))
     "FunctionExpression"
     (list 'function
-          (mapv get1 (expression "params"))
+          (mapv parse-expr (expression "params"))
           (mapv parse ((expression "body") "body")))
     "ConditionalExpression"
     (list 'if
@@ -36,7 +30,8 @@
             [(parse-expr (expression "object"))
              (parse-expr (expression "property"))])
       (prn 'not-computed!?))
-    (get1 expression)
+    "Identifier" (symbol (expression "name"))
+    "Literal" (expression "value")
     #_(prn 'hmmmmmmmmm)))
 
 (defn parse [node]
@@ -45,7 +40,7 @@
     (parse-expr (node "expression"))
     "VariableDeclaration"
     (for [declarations (node "declarations")]
-      (list 'var (get1 (declarations "id"))
+      (list 'var (parse-expr (declarations "id"))
             ((declarations "init") "value")))
     (do
       (prn 'else)
