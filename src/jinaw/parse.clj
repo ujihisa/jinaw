@@ -5,7 +5,7 @@
   (case (node "type")
     "Identifier" (symbol (node "name"))
     "Literal" (node "value")
-    (prn 'omg!)))
+    (prn 'omg! node)))
 
 (declare parse)
 
@@ -17,11 +17,16 @@
            (get1 (expression "right"))])
     "CallExpression"
     (list 'fcall (parse-expr (expression "callee"))
-          (mapv get1 (expression "arguments")))
+          (mapv parse-expr (expression "arguments")))
     "FunctionExpression"
     (list 'function
           (mapv get1 (expression "params"))
           (mapv parse ((expression "body") "body")))
+    "ConditionalExpression"
+    (list 'if
+          (parse-expr (expression "test"))
+          (parse-expr (expression "consequent"))
+          (parse-expr (expression "alternate")))
     (get1 expression)
     #_(prn 'hmmmmmmmmm)))
 
