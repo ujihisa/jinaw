@@ -11,6 +11,9 @@
 
 (defn- parse-expr [expression]
   (case (expression "type")
+    "ArrayExpression"
+    (let [value-vec (map parse-expr (expression "elements"))]
+      (into {} (map vector (map str (iterate inc 0)) value-vec)))
     "BinaryExpression"
     (list 'fcall (symbol (expression "operator"))
           [(get1 (expression "left"))
@@ -27,6 +30,12 @@
           (parse-expr (expression "test"))
           (parse-expr (expression "consequent"))
           (parse-expr (expression "alternate")))
+    "MemberExpression"
+    (if (expression "computed")
+      (list 'fcall '-aref
+            [(parse-expr (expression "object"))
+             (parse-expr (expression "property"))])
+      (prn 'not-computed!?))
     (get1 expression)
     #_(prn 'hmmmmmmmmm)))
 
