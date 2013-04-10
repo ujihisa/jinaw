@@ -7,23 +7,28 @@
     "Literal" (node "value")
     (prn 'omg!)))
 
+(declare parse)
+
+(defn- parse-expr [expression]
+  (case (expression "type")
+    "BinaryExpression"
+    (list 'fcall (symbol (expression "operator"))
+          [(get1 (expression "left"))
+           (get1 (expression "right"))])
+    "CallExpression"
+    (list 'fcall (parse-expr (expression "callee"))
+          (mapv get1 (expression "arguments")))
+    "FunctionExpression"
+    (list 'function
+          (mapv get1 (expression "params"))
+          (mapv parse ((expression "body") "body")))
+    (get1 expression)
+    #_(prn 'hmmmmmmmmm)))
+
 (defn parse [node]
   (case (node "type")
     "ExpressionStatement"
-    (let [expression (node "expression")]
-      (case (expression "type")
-        "BinaryExpression"
-        (list 'fcall (symbol (expression "operator"))
-              [(get1 (expression "left"))
-               (get1 (expression "right"))])
-        "CallExpression"
-        (list 'fcall (get1 (expression "callee"))
-              (mapv get1 (expression "arguments")))
-        "FunctionExpression"
-        (list 'function
-              (mapv get1 (expression "params"))
-              (mapv parse ((expression "body") "body")))
-        (prn 'hmmmmmmmmm)))
+    (parse-expr (node "expression"))
     "VariableDeclaration"
     (for [declarations (node "declarations")]
       (list 'var (get1 (declarations "id"))
